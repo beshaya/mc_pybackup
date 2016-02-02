@@ -1,7 +1,19 @@
 import os, zipfile, json
 import time, datetime
 
+MINUTES = 60
+HOURS = 60 * MINUTES
+DAYS = HOURS * 24
+
+# Add folders that should be backed up here
 WORLDS = ["C:\\ftb\\EthosLPPackserver\\EthosLPPackserver-bk\\EthosLPPackserver\\world2"]
+
+# Use this to set how often backups can be made. Useful for Windows Scheduler, which has poor granularity.
+# Note that this won't do anything if your task scheduler runs this script less often than this setting
+
+MIN_BACKUP_INTERVAL = 30 * MINUTES
+#MIN_BACKUP_INTERVAL = 4 * HOURS
+
 backupLog = "mcbackup.log"
 
 def zip_dir(zipname, dir_to_zip):
@@ -43,7 +55,7 @@ def backup_world(world):
     except KeyError as e:
         print world + " not found in log. Adding it."
     
-    if lastModified > lastBackup:
+    if lastModified > lastBackup + MIN_BACKUP_INTERVAL:
         nowHuman = time.strftime("%Y-%m-%d_%H-%M-%S")
         nowUTC = time.time()
         zipName = world.split(os.sep)[-1] + '_' + nowHuman + '.zip'	
