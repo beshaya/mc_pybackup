@@ -12,3 +12,6 @@ Usage:
  * Backups are compressed as .zip for portability
  * mcbackup won't make a new backup if the original file hasn't been modified since the last backup. This saves a LOT of space if the folder isn't constantly being modified.
 * Suggested: set up cron or Windows Scheduler to run your script. The included .bat file will work with Windows Scheduler.
+* By default, backups will be stored in a folder named with the *two* bottom-most folders where your target is
+ * In the default setup, this backups for [..]/EthosLPPackserver/world2 will be stored in ./EthosLPPackserver-world2/
+ * This can be changed manually by changing the function make_backup_dir

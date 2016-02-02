@@ -16,6 +16,9 @@ MIN_BACKUP_INTERVAL = 30 * MINUTES
 
 backupLog = "mcbackup.log"
 
+def make_backup_dir(dir):
+    return '-'.join(dir.split(os.sep)[-2:])
+
 def zip_dir(zipname, dir_to_zip):
     dir_to_zip_len = len(dir_to_zip.rstrip(os.sep)) + 1
     with zipfile.ZipFile(zipname, mode='w', compression=zipfile.ZIP_DEFLATED) as zf:
@@ -54,13 +57,19 @@ def backup_world(world):
         logFile = open(backupLog, 'w')
     except KeyError as e:
         print world + " not found in log. Adding it."
-    
+
     if lastModified > lastBackup + MIN_BACKUP_INTERVAL:
         nowHuman = time.strftime("%Y-%m-%d_%H-%M-%S")
         nowUTC = time.time()
-        zipName = world.split(os.sep)[-1] + '_' + nowHuman + '.zip'	
-        print "Compressing " + zipName
-        zip_dir(zipName, world)
+        backupDir = make_backup_dir(world)
+
+        # Make the directory for the backups if necessary
+        if not os.path.exists(backupDir):
+            os.makedirs(backupDir)
+
+        backupName = world.split(os.sep)[-1] + '_' + nowHuman + '.zip'	
+        print "Compressing " + backupName
+        zip_dir(backupDir + os.sep + backupName, world)
         logFile.seek(0)
         log[world] = nowUTC
         json.dump(log, logFile)
